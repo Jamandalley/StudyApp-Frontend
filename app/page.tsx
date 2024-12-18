@@ -26,11 +26,11 @@ export default function StudyApp() {
 
         setTimeout(async () => {
             try {
-                let formData = new FormData();
+                const formData = new FormData();
                 formData.append('file', file);
 
                 // Make an API call to your backend (Next.js API route or external API)
-                let response = await fetch('http://localhost:4000/generate-questions', {
+                const response = await fetch('http://localhost:4000/generate-questions', {
                     method: 'POST',
                     body: formData,
                 });
@@ -40,7 +40,7 @@ export default function StudyApp() {
                     throw new Error('Failed to generate questions. Please try again.');
                 }
 
-                let data = await response.json();
+                const data = await response.json();
 
                 if (!data.questions || !Array.isArray(data.questions)) {
                     throw new Error('Invalid response format from API.');
