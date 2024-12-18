@@ -30,7 +30,7 @@ export default function StudyApp() {
                 formData.append('file', file);
 
                 // Make an API call to your backend (Next.js API route or external API)
-                const response = await fetch('http://localhost:4000/generate-questions', {
+                const response = await fetch('https://studyapp-backend-w1jm.onrender.com/generate-questions', {
                     method: 'POST',
                     body: formData,
                 });
