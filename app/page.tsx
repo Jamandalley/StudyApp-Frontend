@@ -1,27 +1,30 @@
-'use client'
+"use client"
 
-import { useState } from 'react'
-import HomeScreen from './components/HomeScreen'
-import UploadScreen from './components/UploadScreen'
-import ProcessingScreen from './components/ProcessingScreen'
-import QuestionReviewScreen from './components/QuestionReviewScreen'
-import QuestionScreen from './components/QuestionScreen'
-import ResultsScreen from './components/ResultsScreen'
+import { useState } from "react"
+import HomeScreen from "./components/HomeScreen"
+import UploadScreen from "./components/UploadScreen"
+import ProcessingScreen from "./components/ProcessingScreen"
+import QuestionReviewScreen from "./components/QuestionReviewScreen"
+import QuestionScreen from "./components/QuestionScreen"
+import ResultsScreen from "./components/ResultsScreen"
+import FeedbackScreen from "./components/FeedbackScreen"
+import { ToastProvider, useToast } from "./contexts/ToastContext"
 
 type Question = {
-    id: number;
-    text: string;
-    options: string[];
-    correctAnswer: number;
+  id: number
+  text: string
+  options: string[]
+  correctAnswer: number
 }
 
-export default function StudyApp() {
-    const [currentScreen, setCurrentScreen] = useState('home')
-    const [questions, setQuestions] = useState<Question[]>([])
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-    const [answers, setAnswers] = useState<number[]>([])
+function StudyAppContent() {
+  const [currentScreen, setCurrentScreen] = useState("home")
+  const [questions, setQuestions] = useState<Question[]>([])
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const [answers, setAnswers] = useState<number[]>([])
+  const { showToast } = useToast()
 
-    const handleUpload = async (file: File) => {
+  const handleUpload = async (file: File) => {
         setCurrentScreen('processing');
 
         setTimeout(async () => {
@@ -74,49 +77,85 @@ export default function StudyApp() {
         }, 3000);
     };
 
-    const startQuiz = () => {
-        setCurrentScreen('question')
-        setCurrentQuestionIndex(0)
-        setAnswers([])
-    }
+  const startQuiz = () => {
+    setCurrentScreen("question")
+    setCurrentQuestionIndex(0)
+    setAnswers([])
+  }
 
-    const handleAnswer = (answerIndex: number) => {
-        setAnswers([...answers, answerIndex])
-        if (currentQuestionIndex < questions.length - 1) {
-            setCurrentQuestionIndex(currentQuestionIndex + 1)
-        } else {
-            setCurrentScreen('results')
+  const handleAnswer = (answerIndex: number) => {
+    setAnswers([...answers, answerIndex])
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1)
+    } else {
+      setCurrentScreen("results")
+    }
+  }
+
+  const returnHome = () => {
+    setCurrentScreen("home")
+  }
+
+//   const handleFeedback = (rating: number, comment: string, email: string) => {
+//     // Here you would typically send this data to your backend
+//     console.log(`Feedback received: Rating: ${rating}, Comment: ${comment}, Email: ${email}`)
+//     showToast("Thank you for your feedback!")
+//     setCurrentScreen("home")
+//   }
+
+const handleFeedback = async (rating: number, comment: string, email: string) => {
+    try {
+        const response = await fetch('https://studyapp-backend-w1jm.onrender.com/submit-feedback', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ rating, comment, email })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to submit feedback');
         }
-    }
 
-    const returnHome = () => {
-        setCurrentScreen('home')
+        showToast("Thank you for your feedback!");
+        setCurrentScreen("home");
+    } catch (error) {
+        console.error("Error submitting feedback:", error);
+        showToast("Failed to submit feedback. Please try again.");
     }
+};
 
-    return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-            <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-                {currentScreen === 'home' && <HomeScreen onUpload={() => setCurrentScreen('upload')} />}
-                {currentScreen === 'upload' && <UploadScreen onUpload={handleUpload} />}
-                {currentScreen === 'processing' && <ProcessingScreen />}
-                {currentScreen === 'review' && <QuestionReviewScreen questions={questions} onStart={startQuiz} />}
-                {currentScreen === 'question' && (
-                    <QuestionScreen
-                        question={questions[currentQuestionIndex]}
-                        onAnswer={handleAnswer}
-                        totalQuestions={questions.length}
-                        currentQuestionNumber={currentQuestionIndex + 1}
-                    />
-                )}
-                {currentScreen === 'results' && (
-                    <ResultsScreen
-                        questions={questions}
-                        answers={answers}
-                        onReturnHome={returnHome}
-                    />
-                )}
-            </div>
-        </div>
-    )
+  return (
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        {currentScreen === "home" && (
+          <HomeScreen onUpload={() => setCurrentScreen("upload")} onFeedback={() => setCurrentScreen("feedback")} />
+        )}
+        {currentScreen === "upload" && <UploadScreen onUpload={handleUpload} />}
+        {currentScreen === "processing" && <ProcessingScreen />}
+        {currentScreen === "review" && <QuestionReviewScreen questions={questions} onStart={startQuiz} />}
+        {currentScreen === "question" && (
+          <QuestionScreen
+            question={questions[currentQuestionIndex]}
+            onAnswer={handleAnswer}
+            totalQuestions={questions.length}
+            currentQuestionNumber={currentQuestionIndex + 1}
+          />
+        )}
+        {currentScreen === "results" && (
+          <ResultsScreen questions={questions} answers={answers} onReturnHome={returnHome} />
+        )}
+        {currentScreen === "feedback" && <FeedbackScreen onSubmit={handleFeedback} onCancel={returnHome} />}
+      </div>
+    </div>
+  )
+}
+
+export default function StudyApp() {
+  return (
+    <ToastProvider>
+      <StudyAppContent />
+    </ToastProvider>
+  )
 }
 
