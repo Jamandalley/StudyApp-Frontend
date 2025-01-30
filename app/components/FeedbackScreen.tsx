@@ -32,7 +32,7 @@ export default function FeedbackScreen({ onSubmit, onCancel, isSubmitting }: Fee
       </div>
       <input
         type="email"
-        placeholder="Your email"
+        placeholder="Your email or name"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         className="w-full mb-4 p-2 border border-gray-300 rounded"
