@@ -8,13 +8,13 @@ import { Star } from "lucide-react"
 type FeedbackScreenProps = {
   onSubmit: (rating: number, comment: string, email: string) => void
   onCancel: () => void
+  isSubmitting: boolean
 }
 
 export default function FeedbackScreen({ onSubmit, onCancel, isSubmitting }: FeedbackScreenProps) {
   const [rating, setRating] = useState(0)
   const [comment, setComment] = useState("")
   const [email, setEmail] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = () => {
     onSubmit(rating, comment, email)
