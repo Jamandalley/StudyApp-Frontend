@@ -47,8 +47,8 @@ export default function FeedbackScreen({ onSubmit, onCancel }: FeedbackScreenPro
         <Button onClick={onCancel} variant="outline">
           Cancel
         </Button>
-        <Button onClick={handleSubmit} disabled={rating === 0 || !email}>
-          Submit Feedback
+        <Button onClick={handleSubmit} disabled={isSubmitting || rating === 0 || !email}>
+          {isSubmitting ? "Submitting Feedback..." : "Submit Feedback"}
         </Button>
       </div>
     </div>
