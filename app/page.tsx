@@ -22,6 +22,7 @@ function StudyAppContent() {
   const [questions, setQuestions] = useState<Question[]>([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [answers, setAnswers] = useState<number[]>([])
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { showToast } = useToast()
 
   const handleUpload = async (file: File) => {
@@ -104,20 +105,23 @@ function StudyAppContent() {
 //   }
 
 const handleFeedback = async (rating: number, comment: string, email: string) => {
+    setIsSubmitting(true); // Change button text
+
+    // Navigate to home screen immediately
+    setCurrentScreen("home");
+    showToast("Thank you for your feedback!");
+
+    // Send request in the background
     try {
-         await fetch('https://studyapp-backend-w1jm.onrender.com/submit-feedback', {
+        await fetch('https://studyapp-backend-w1jm.onrender.com/submit-feedback', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ rating, comment, email })
         });
-
-        showToast("Thank you for your feedback!");
-        setCurrentScreen("home");
     } catch (error) {
         console.error("Error submitting feedback:", error);
-        showToast("Failed to submit feedback. Please try again.");
+    } finally {
+        setIsSubmitting(false); // Reset button text
     }
 };
 
