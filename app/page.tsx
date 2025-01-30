@@ -106,10 +106,8 @@ function StudyAppContent() {
 
 const handleFeedback = async (rating: number, comment: string, email: string) => {
     setIsSubmitting(true); // Change button text
-
-    // Navigate to home screen immediately
-    setCurrentScreen("home");
     showToast("Thank you for your feedback!");
+    setCurrentScreen("home");
 
     // Send request in the background
     try {
