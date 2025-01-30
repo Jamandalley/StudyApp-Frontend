@@ -10,10 +10,11 @@ type FeedbackScreenProps = {
   onCancel: () => void
 }
 
-export default function FeedbackScreen({ onSubmit, onCancel }: FeedbackScreenProps) {
+export default function FeedbackScreen({ onSubmit, onCancel, isSubmitting }: FeedbackScreenProps) {
   const [rating, setRating] = useState(0)
   const [comment, setComment] = useState("")
   const [email, setEmail] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = () => {
     onSubmit(rating, comment, email)
