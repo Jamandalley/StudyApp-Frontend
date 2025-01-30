@@ -105,17 +105,13 @@ function StudyAppContent() {
 
 const handleFeedback = async (rating: number, comment: string, email: string) => {
     try {
-        const response = await fetch('https://studyapp-backend-w1jm.onrender.com/submit-feedback', {
+         await fetch('https://studyapp-backend-w1jm.onrender.com/submit-feedback', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ rating, comment, email })
         });
-
-        if (!response.ok) {
-            throw new Error('Failed to submit feedback');
-        }
 
         showToast("Thank you for your feedback!");
         setCurrentScreen("home");
