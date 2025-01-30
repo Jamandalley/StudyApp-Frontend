@@ -143,7 +143,7 @@ const handleFeedback = async (rating: number, comment: string, email: string) =>
         {currentScreen === "results" && (
           <ResultsScreen questions={questions} answers={answers} onReturnHome={returnHome} />
         )}
-        {currentScreen === "feedback" && <FeedbackScreen onSubmit={handleFeedback} onCancel={returnHome} />}
+        {currentScreen === "feedback" && <FeedbackScreen onSubmit={handleFeedback} onCancel={returnHome} isSubmitting={isSubmitting} />}
       </div>
     </div>
   )
